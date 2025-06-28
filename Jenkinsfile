@@ -17,6 +17,11 @@ spec:
     command: ['cat']
     tty: true
 
+  - name: helm
+    image: alpine/helm:3.14.3
+    command: ['cat']
+    tty: true
+
   - name: kaniko
     image: gcr.io/kaniko-project/executor:debug
     command: ["/busybox/cat"]
@@ -42,6 +47,8 @@ spec:
   environment {
     ECR_REPO = '980889732995.dkr.ecr.us-east-1.amazonaws.com/springboot-app'
     IMAGE_TAG = "v${BUILD_NUMBER}"
+    RELEASE_NAME = "springboot"
+    NAMESPACE = "springboot"
   }
 
   stages {
@@ -76,18 +83,22 @@ spec:
         }
       }
     }
-
-    stage('Deploy to EKS') {
+    
+    stage('Helm Deploy to EKS') {
       steps {
-        container('kubectl') {
-          dir("${env.WORKSPACE}") {
-            sh '''
-            sed "s|REPLACE_IMAGE|$ECR_REPO:$IMAGE_TAG|" springboot-deployment.yaml | kubectl apply -f -
-            '''
-          }
+        container('helm') {
+            dir("${env.WORKSPACE}") {
+              sh '''
+              helm upgrade --install $RELEASE_NAME helm/ \
+                --namespace $NAMESPACE --create-namespace \
+                --set image.repository=$ECR_REPO \
+                --set image.tag=$IMAGE_TAG
+              '''
+            }
         }
       }
     }
+
   }
 
   post {
