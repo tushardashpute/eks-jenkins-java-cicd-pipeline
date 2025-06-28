@@ -3,6 +3,11 @@ output "cluster_id" {
   value       = module.eks.cluster_id
 }
 
+output "cluster_name" {
+  description = "EKS cluster Name."
+  value       = module.eks.cluster_name
+}
+
 output "cluster_endpoint" {
   description = "Endpoint for EKS control plane."
   value       = module.eks.cluster_endpoint
@@ -31,4 +36,9 @@ output "ecr_repository_url" {
 output "jenkins_irsa_role_arn" {
   description = "IAM Role ARN associated with the Jenkins service account via IRSA"
   value       = aws_iam_role.jenkins_irsa_role.arn
+}
+
+output "account_id" {
+  description = "Account ID required to substitue in jenkins-values.yaml"
+  value = data.aws_caller_identity.current.account_id
 }
