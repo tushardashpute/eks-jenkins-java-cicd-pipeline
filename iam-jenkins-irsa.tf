@@ -5,13 +5,13 @@ data "aws_iam_policy_document" "jenkins_irsa_assume_role_policy" {
       type        = "Federated"
       identifiers = [module.eks.oidc_provider_arn]
     }
-
-condition {
-  test     = "StringEquals"
-  variable = "${replace(module.eks.oidc_provider_arn, "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/", "")}:sub"
-  values   = ["system:serviceaccount:jenkins:jenkins"]
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(module.eks.oidc_provider_arn, "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/", "")}:sub"
+      values   = ["system:serviceaccount:jenkins:jenkins"]
+    }
+  }
 }
-
 
 data "aws_iam_policy_document" "ecr_access_policy" {
   statement {
