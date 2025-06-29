@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "springboot_app" {
-  name                 = "springboot-app"
+  name                 = var.ecr_repo_name
   image_tag_mutability = "MUTABLE"
   force_delete         = true
 

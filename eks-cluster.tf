@@ -6,7 +6,7 @@ resource "random_string" "suffix" {
 
 locals {
   # Dynamically generated cluster name with random suffix for uniqueness
-  cluster_name = "eks-${random_string.suffix.result}"
+  cluster_name = "${var.clustername}-${random_string.suffix.result}"
 }
 
 module "eks" {

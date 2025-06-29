@@ -39,7 +39,7 @@ variable "single_nat_gateway" {
   default = true
 }
 
-variable "cluster_name" {
+variable "clustername" {
   description = "Name of the EKS cluster"
   type        = string
   default     = "toolchain-eks-cluster"
@@ -81,4 +81,10 @@ variable "tags" {
     Application = "springboot-app"
     Owner       = "toolchain-challenge"
   }
+}
+
+variable "ecr_repo_name" {
+  description = "Name of the ECR repository"
+  type        = string
+  default     = "springboot-app"
 }
