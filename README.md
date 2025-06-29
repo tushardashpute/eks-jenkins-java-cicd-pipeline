@@ -228,6 +228,16 @@ pipeline {
       }
     }
 
+    stage('Scan Docker Image with Trivy') {
+      steps {
+        container('trivy') {
+          sh '''
+            trivy image --exit-code 1 --severity CRITICAL,HIGH $ECR_REPO:$IMAGE_TAG || echo "⚠️ Vulnerabilities found. Review required."
+          '''
+        }
+      }
+    }
+
     stage('Helm Deploy to EKS') {
       steps {
         container('helm') {
@@ -239,12 +249,6 @@ pipeline {
           '''
         }
       }
-    }
-  }
-
-  post {
-    always {
-      junit '**/target/surefire-reports/*.xml'
     }
   }
 }
