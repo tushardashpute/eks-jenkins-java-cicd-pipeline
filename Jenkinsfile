@@ -70,6 +70,16 @@ spec:
       }
     }
 
+    stage('SonarQube Analysis') {
+      steps {
+        container('maven') {
+          withSonarQubeEnv('SonarQube') {
+            sh 'mvn sonar:sonar -Dsonar.projectKey=springboot-app -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_AUTH_TOKEN'
+          }
+        }
+      }
+    }
+
     stage('Build & Push Docker Image (Kaniko)') {
       steps {
         container('kaniko') {
