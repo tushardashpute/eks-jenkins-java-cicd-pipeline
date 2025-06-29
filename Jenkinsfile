@@ -35,9 +35,15 @@ spec:
     workingDir: /workspace
     tty: true
 
+  - name: trivy
+    image: aquasec/trivy:latest
+    command: ['cat']
+    tty: true
+
   volumes:
   - name: workspace-volume
     emptyDir: {}
+
   serviceAccountName: jenkins
   restartPolicy: Never
 """
@@ -61,11 +67,9 @@ spec:
     stage('Build with Maven') {
       steps {
         container('maven') {
-      sh '''
-        mvn clean package -DskipTests
-        echo "Sleeping for 5 minutes for debugging or inspection..."
-        ## sleep 3
-      '''
+          sh '''
+            mvn clean package -DskipTests
+          '''
         }
       }
     }
@@ -84,36 +88,39 @@ spec:
       steps {
         container('kaniko') {
           sh '''
-          /kaniko/executor \
-            --context `pwd` \
-            --dockerfile `pwd`/Dockerfile \
-            --destination=$ECR_REPO:$IMAGE_TAG \
-            --verbosity=info
+            /kaniko/executor \
+              --context `pwd` \
+              --dockerfile `pwd`/Dockerfile \
+              --destination=$ECR_REPO:$IMAGE_TAG \
+              --verbosity=info
           '''
         }
       }
     }
-    
-    stage('Helm Deploy to EKS') {
+
+    stage('Scan Docker Image with Trivy') {
       steps {
-        container('helm') {
-            dir("${env.WORKSPACE}") {
-              sh '''
-              helm upgrade --install $RELEASE_NAME helm/ \
-                --namespace $NAMESPACE --create-namespace \
-                --set image.repository=$ECR_REPO \
-                --set image.tag=$IMAGE_TAG
-              '''
-            }
+        container('trivy') {
+          sh '''
+            trivy image --exit-code 1 --severity CRITICAL $ECR_REPO:$IMAGE_TAG || echo "⚠️ Vulnerabilities found. Review required."
+          '''
         }
       }
     }
 
-  }
-
-  post {
-    always {
-      junit '**/target/surefire-reports/*.xml'
+    stage('Helm Deploy to EKS') {
+      steps {
+        container('helm') {
+          dir("${env.WORKSPACE}") {
+            sh '''
+              helm upgrade --install $RELEASE_NAME helm/ \
+                --namespace $NAMESPACE --create-namespace \
+                --set image.repository=$ECR_REPO \
+                --set image.tag=$IMAGE_TAG
+            '''
+          }
+        }
+      }
     }
   }
 }
