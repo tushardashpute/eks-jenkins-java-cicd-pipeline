@@ -1,4 +1,4 @@
-```md
+---```md
 # 🚀 EKS Jenkins Java CI/CD Pipeline
 
 This project provisions an Amazon EKS cluster using Terraform, installs Jenkins and SonarQube via Helm, and automates CI/CD for a Java (Spring Boot) application using Jenkins, Docker (via Kaniko), ECR, and Helm.
@@ -268,6 +268,16 @@ roleRef:
   name: jenkins-deploy-role
   apiGroup: rbac.authorization.k8s.io
 ```
+
+---
+
+## 🗂️ Terraform Outputs
+
+* EKS Cluster Endpoint
+* OIDC Provider URL
+* IRSA role ARN
+* ECR Repo Name
+* VPC/Subnet IDs
 
 ---
 
