@@ -15,6 +15,7 @@ This project provisions an Amazon EKS cluster using Terraform, installs Jenkins 
 - **AWS ECR** – Image repository
 - **SonarQube** – Static code analysis
 - **Maven** – Java project build tool
+- **Trivy** - Scan container images for vulnerabilities 
 
 ---
 
@@ -58,6 +59,7 @@ This project provisions an Amazon EKS cluster using Terraform, installs Jenkins 
 - **Docker Build + Push** via Kaniko to ECR
 - **Deploy** using Helm into the EKS cluster
 - **SonarQube Scan** included in pipeline
+- **Trivy Scan** Scan Docker Image with trivy
 
 ---
 
