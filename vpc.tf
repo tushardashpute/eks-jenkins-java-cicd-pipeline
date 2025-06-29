@@ -14,10 +14,14 @@ module "vpc" {
   single_nat_gateway   = var.single_nat_gateway
   enable_dns_hostnames = true
   enable_dns_support   = true
+  
+  tags = merge(
+    var.tags,
+    {
+      "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    }
+  )
 
-  tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-  }
 
   public_subnet_tags = {
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"

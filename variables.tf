@@ -72,3 +72,13 @@ variable "node_group_desired_size" {
   default     = 2
   description = "Desired number of nodes in the node group"
 }
+
+variable "tags" {
+  description = "Tags to apply to ECR resources"
+  type        = map(string)
+  default = {
+    Environment = "dev"
+    Application = "springboot-app"
+    Owner       = "toolchain-challenge"
+  }
+}

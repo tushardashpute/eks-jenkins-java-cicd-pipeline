@@ -1,6 +1,7 @@
 resource "aws_security_group" "all_worker_mgmt" {
   name_prefix = "worker_mgmt"
   vpc_id      = module.vpc.vpc_id
+  tags = var.tags
 }
 
 resource "aws_security_group_rule" "all_worker_mgmt_ingress" {

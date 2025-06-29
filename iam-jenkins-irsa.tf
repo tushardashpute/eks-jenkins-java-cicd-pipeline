@@ -38,9 +38,7 @@ resource "aws_iam_role" "jenkins_irsa_role" {
 
   assume_role_policy = data.aws_iam_policy_document.jenkins_irsa_assume_role_policy.json
 
-  tags = {
-    app = "jenkins"
-  }
+  tags = var.tags
 }
 
 resource "aws_iam_policy" "jenkins_ecr_policy" {

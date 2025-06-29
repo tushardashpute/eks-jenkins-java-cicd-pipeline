@@ -7,11 +7,7 @@ resource "aws_ecr_repository" "springboot_app" {
     scan_on_push = true
   }
 
-  tags = {
-    Environment = "dev"
-    Application = "springboot-app"
-    Owner       = "toolchain-challenge"
-  }
+  tags = var.tags
 }
 
 resource "aws_ecr_lifecycle_policy" "springboot_app" {

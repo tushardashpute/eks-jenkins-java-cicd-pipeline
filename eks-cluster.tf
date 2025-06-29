@@ -1,3 +1,14 @@
+# "Generates a random 8-character string to suffix the EKS cluster name"
+resource "random_string" "suffix" {
+  length      = 8
+  special     = false
+}
+
+locals {
+  # Dynamically generated cluster name with random suffix for uniqueness
+  cluster_name = "eks-${random_string.suffix.result}"
+}
+
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "~> 20.0"
@@ -37,10 +48,7 @@ module "eks" {
     }
   }
 
-  tags = {
-    environment = "dev"
-    owner       = "toolchain-challenge"
-  }
+  tags = var.tags
 }
 
 module "ebs_csi_irsa" {
@@ -56,10 +64,7 @@ module "ebs_csi_irsa" {
     "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
   ]
 
-  tags = {
-    environment = "dev"
-    owner       = "toolchain-challenge"
-  }
+  tags = var.tags
 }
 
 resource "null_resource" "make_gp2_default" {
