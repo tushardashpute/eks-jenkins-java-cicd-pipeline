@@ -1,0 +1,18 @@
+# Terraform directories and state files
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+override.tf
+override.tf.json
+.terraform.lock.hcl
+
+# Terraform variable files (usually sensitive)
+*.tfvars
+*.tfvars.json
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+*~

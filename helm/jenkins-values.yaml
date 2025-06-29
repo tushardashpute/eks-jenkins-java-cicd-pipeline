@@ -1,0 +1,74 @@
+controller:
+  # Admin credentials (can also be set using Kubernetes secrets)
+  admin:
+    username: admin
+    password: admin123
+
+  # Service type: LoadBalancer to expose externally (can be changed to ClusterIP or NodePort)
+  serviceType: LoadBalancer
+
+  # Enable ingress (optional)
+  ingress:
+    enabled: false
+
+  # Set resource requests and limits
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+
+  # Enable persistence
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: "gp2"
+
+  # Install default plugins
+  installPlugins:
+    - kubernetes:latest
+    - workflow-aggregator:latest
+    - git:latest
+    - configuration-as-code:latest
+    - docker-workflow:latest
+    - blueocean:latest
+    - credentials-binding
+    - sonar:latest
+    - allure-jenkins-plugin
+
+  # Java options
+  javaOpts: "-Xmx2048m"
+
+  # Enable Jenkins Configuration as Code (JCasC)
+  JCasC:
+    enabled: true
+    defaultConfig: true
+
+persistence:
+  enabled: true
+  storageClass: "gp2"
+  accessMode: "ReadWriteOnce"
+  size: "8Gi"
+
+agent:
+  enabled: true
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
+# RBAC required for Kubernetes agents
+rbac:
+  create: true
+
+# Service account for Jenkins
+serviceAccount:
+  create: true
+  name: jenkins
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::980889732995:role/jenkins-irsa-role
