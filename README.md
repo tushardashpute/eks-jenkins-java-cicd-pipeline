@@ -1,4 +1,4 @@
----```md
+---
 # 🚀 EKS Jenkins Java CI/CD Pipeline
 
 This project provisions an Amazon EKS cluster using Terraform, installs Jenkins and SonarQube via Helm, and automates CI/CD for a Java (Spring Boot) application using Jenkins, Docker (via Kaniko), ECR, and Helm.
@@ -28,8 +28,8 @@ This project provisions an Amazon EKS cluster using Terraform, installs Jenkins 
 │   └── templates/
 ├── jenkins/Jenkinsfile           # CI/CD pipeline
 ├── terraform/                    # Terraform modules for EKS, ECR, IAM
-├── variables.tf                  # Input variables
-├── terraform.tfvars              # Values for input variables
+|   ├── variables.tf                  # Input variables
+|   ├── terraform.tfvars              # Values for input variables
 └── README.md
 
 ````
@@ -80,12 +80,8 @@ This project provisions an Amazon EKS cluster using Terraform, installs Jenkins 
 - Java + Maven
 
 ---
-
-### 🧪 Provision Infrastructure
-
-```bash
-# Optional: Create s3 bucket for state locking if not having existing
 ## 🌐 Terraform Setup with Native S3 Locking (No DynamoDB Required)
+# Optional: Create s3 bucket for state locking if not having an existing
 
 resource "aws_s3_bucket" "backend" {
   bucket = var.bucket_name
@@ -97,6 +93,13 @@ resource "aws_s3_bucket_versioning" "backend" {
     status = "Enabled"
   }
 }
+
+---
+
+### 🧪 Provision Infrastructure
+
+```bash
+
 # 1. Initialize Terraform
 terraform -chdir=terraform init
 
@@ -107,6 +110,8 @@ terraform -chdir=terraform plan
 terraform -chdir=terraform apply -auto-approve
 
 # 4. Update kubeconfig
+Use the terraform output cluster_name to get cluster name
+
 aws eks update-kubeconfig --region us-east-1 --name toolchain-eks-cluster
 ````
 
@@ -118,12 +123,14 @@ aws eks update-kubeconfig --region us-east-1 --name toolchain-eks-cluster
 helm repo add jenkins https://charts.jenkins.io
 helm repo update
 
+Update the Role ARN in helm/jenkins-values.yaml using terraform output jenkins_irsa_role_arn
+
 helm install jenkins jenkins/jenkins \
   --namespace jenkins \
   --create-namespace \
   --values helm/jenkins-values.yaml
 
-# Apply RBAC for Jenkins to deploy across namespaces
+# Apply RBAC for Jenkins to deploy across namespaces,
 kubectl apply -f helm/jenkins-deploy-role.yaml
 ```
 
@@ -142,7 +149,7 @@ helm install sonarqube oteemocharts/sonarqube \
   --set ingress.enabled=false \
   --set service.type=LoadBalancer
 
-# Wait for external IP
+# Wait for the external IP
 kubectl get svc -n sonarqube
 ```
 
@@ -274,16 +281,10 @@ roleRef:
 ## 🗂️ Terraform Outputs
 
 * EKS Cluster Endpoint
+* EKS Cluster name
 * OIDC Provider URL
 * IRSA role ARN
 * ECR Repo Name
 * VPC/Subnet IDs
+* Account ID
 
----
-
-## 📄 Terraform Outputs
-
-* EKS Cluster Endpoint
-* IAM OIDC Provider URL
-* IRSA role ARN for Jenkins
-* ECR repository for Docker images
