@@ -9,7 +9,7 @@ This project provisions an Amazon EKS cluster using Terraform, installs Jenkins 
 
 - **Terraform** – Infrastructure as Code
 - **AWS EKS** – Kubernetes cluster
-- **Helm** – Deploying Jenkins, SonarQube, and application charts
+- **Helm** – Deploying Metric Server, Prometheus, Jenkins, SonarQube, and application charts
 - **Jenkins** – CI/CD automation
 - **Kaniko** – Docker builds in Kubernetes without Docker daemon
 - **AWS ECR** – Image repository
